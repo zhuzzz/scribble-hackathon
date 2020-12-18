@@ -9,6 +9,17 @@ resource "aws_codepipeline" "scribble_pipeline" {
     location = aws_s3_bucket.artifacts_bucket.bucket
     type     = "S3"
   }
+  
+    # Workaround for Terraform insisting on "updating" OAuthToken every run. In
+    # the event that the OAuthToken actually needs to be updated, comment out
+    # the `lifecycle` block, run `terraform apply`, and then restore the block.
+    #
+    # https://github.com/terraform-providers/terraform-provider-aws/issues/2854
+    lifecycle {
+      ignore_changes = [
+        "stage[0].action[0].configuration.OAuthToken",
+      ]
+    }
 
   stage {
     name = "Source"
@@ -20,7 +31,7 @@ resource "aws_codepipeline" "scribble_pipeline" {
         "Owner"                = var.repository_owner
         "PollForSourceChanges" = "true"
         "Repo"                 = var.repository_name
-        OAuthToken             = "${data.aws_ssm_parameter.webhook_secret.value}"
+         OAuthToken            = data.aws_ssm_parameter.webhook_secret.value
       }
 
       input_artifacts = []

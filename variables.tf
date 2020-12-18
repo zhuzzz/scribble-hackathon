@@ -25,5 +25,5 @@ variable "repository_name" {
 
 variable "artifacts_bucket_name" {
   description = "S3 Bucket for storing artifacts"
-  default     = "codepipeline-artifact-bucket-scribble"
+  default     = "codepipeline-artifact-scribble"
 }

@@ -31,7 +31,7 @@ module "example_asg" {
 
   image_id        = "ami-0e472933a1395e172"
   instance_type   = "m5.2xlarge"
-  key_name        = "us-west-2"
+  key_name        = "defaultKeyPair"
   security_groups = [data.aws_security_group.default.id]
   load_balancers  = [module.elb.this_elb_id]
   user_data       = <<EOF
