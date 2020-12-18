@@ -1,3 +1,4 @@
+// service role for codepipeline
 resource "aws_iam_role" "scribble_pipeline_role" {
 
   assume_role_policy = jsonencode(
@@ -72,6 +73,7 @@ resource "aws_iam_role_policy_attachment" "pipeline_policy_attachment" {
   policy_arn = aws_iam_policy.scribble_pipeline_policy.arn
 }
 
+// service role for codebuild
 resource "aws_iam_role" "scribble_codebuild_role" {
   assume_role_policy = jsonencode(
     {
@@ -132,6 +134,7 @@ resource "aws_iam_role_policy_attachment" "build_policy_attachment" {
   policy_arn = aws_iam_policy.scribble_build_policy.arn
 }
 
+// service role for codedeploy
 resource "aws_iam_role" "scribble_codedeploy_role" {
   name = "scribble-codedeploy-role-terraform"
 
@@ -157,3 +160,54 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
   role       = aws_iam_role.scribble_codedeploy_role.name
 }
 
+// instance profile
+resource "aws_iam_instance_profile" "codedeploy-instance-profile-terraform" {
+  name = "codedeploy-instance-profile-terraform"
+  role = aws_iam_role.codeploy_instance_profile_role.name
+}
+
+resource "aws_iam_role" "codeploy_instance_profile_role" {
+  name = "codedeploy-instance-profile-terraform"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "scribble_codedeploy_instance_profile_policy" {
+  name = "scribble-codedeploy-instance-profile-policy"
+  path = "/"
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Action" : [
+            "s3:Get*",
+            "s3:List*"
+          ],
+          "Effect" : "Allow",
+          "Resource" : "*"
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "instance_profile_policy_attachment" {
+  role       = aws_iam_role.codeploy_instance_profile_role.name
+  policy_arn = aws_iam_policy.scribble_codedeploy_instance_profile_policy.arn
+}

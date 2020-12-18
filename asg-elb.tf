@@ -75,7 +75,7 @@ EOF
   max_size                  = 4
   desired_capacity          = 1
   wait_for_capacity_timeout = 0
-  iam_instance_profile      = "CodeDeployDemo-EC2-Instance-Profile"
+  iam_instance_profile      = aws_iam_instance_profile.codedeploy-instance-profile-terraform.arn
 }
 
 ######
