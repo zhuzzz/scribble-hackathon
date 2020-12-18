@@ -1,6 +1,6 @@
-resource "aws_codepipeline" "static_web_pipeline" {
-  name     = "static-web-pipeline"
-  role_arn = aws_iam_role.pipeline_role.arn
+resource "aws_codepipeline" "scribble_pipeline" {
+  name     = "scribble-pipeline-terraform"
+  role_arn = aws_iam_role.scribble_pipeline_role.arn
   tags = {
     Environment = var.env
   }
@@ -50,7 +50,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
             },
           ]
         )
-        "ProjectName" = "static-web-build"
+        "ProjectName" = "scribble-codebuild-terraform"
       }
       input_artifacts = [
         "SourceArtifact",
@@ -66,24 +66,24 @@ resource "aws_codepipeline" "static_web_pipeline" {
     }
   }
 
-  stage {
-    name = "Deploy"
-
-    action {
-      category = "Deploy"
-      configuration = {
-        "BucketName" = aws_s3_bucket.static_web_bucket.bucket
-        "Extract"    = "true"
-      }
-      input_artifacts = [
-        "BuildArtifact",
-      ]
-      name             = "Deploy"
-      output_artifacts = []
-      owner            = "AWS"
-      provider         = "S3"
-      run_order        = 1
-      version          = "1"
-    }
-  }
+//  stage {
+//    name = "Deploy"
+//
+//    action {
+//      category = "Deploy"
+//      configuration = {
+//        "BucketName" = aws_s3_bucket.static_web_bucket.bucket
+//        "Extract"    = "true"
+//      }
+//      input_artifacts = [
+//        "BuildArtifact",
+//      ]
+//      name             = "Deploy"
+//      output_artifacts = []
+//      owner            = "AWS"
+//      provider         = "S3"
+//      run_order        = 1
+//      version          = "1"
+//    }
+//  }
 }
