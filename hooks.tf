@@ -6,10 +6,10 @@ resource "aws_codepipeline_webhook" "codepipeline_webhook" {
   authentication  = "GITHUB_HMAC"
   name            = "codepipeline-webhook"
   target_action   = "Source"
-  target_pipeline = aws_codepipeline.static_web_pipeline.name
+  target_pipeline = aws_codepipeline.scribble_pipeline.name
 
   authentication_configuration {
-      secret_token = "${data.aws_ssm_parameter.webhook_secret.value}"
+    secret_token = data.aws_ssm_parameter.webhook_secret.value
   }
 
   filter {
@@ -27,7 +27,7 @@ resource "github_repository_webhook" "github_hook" {
     url          = aws_codepipeline_webhook.codepipeline_webhook.url
     insecure_ssl = "0"
     content_type = "json"
-    secret       = "${data.aws_ssm_parameter.webhook_secret.value}"
+    secret       = data.aws_ssm_parameter.webhook_secret.value
   }
 }
 

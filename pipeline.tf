@@ -1,6 +1,6 @@
-resource "aws_codepipeline" "static_web_pipeline" {
-  name     = "static-web-pipeline"
-  role_arn = aws_iam_role.pipeline_role.arn
+resource "aws_codepipeline" "scribble_pipeline" {
+  name     = "scribble-pipeline-terraform"
+  role_arn = aws_iam_role.scribble_pipeline_role.arn
   tags = {
     Environment = var.env
   }
@@ -20,7 +20,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
         "Owner"                = var.repository_owner
         "PollForSourceChanges" = "true"
         "Repo"                 = var.repository_name
-        "OAuthToken"           = "${data.aws_ssm_parameter.webhook_secret.value}"
+        OAuthToken             = "${data.aws_ssm_parameter.webhook_secret.value}"
       }
 
       input_artifacts = []
@@ -50,7 +50,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
             },
           ]
         )
-        "ProjectName" = "static-web-build"
+        "ProjectName" = "scribble-codebuild-terraform"
       }
       input_artifacts = [
         "SourceArtifact",
@@ -72,8 +72,8 @@ resource "aws_codepipeline" "static_web_pipeline" {
     action {
       category = "Deploy"
       configuration = {
-        "BucketName" = aws_s3_bucket.static_web_bucket.bucket
-        "Extract"    = "true"
+        "ApplicationName"     = aws_codedeploy_app.scribble_deploy.name
+        "DeploymentGroupName" = aws_codedeploy_deployment_group.scribble_codedeploy_deployment_group.deployment_group_name
       }
       input_artifacts = [
         "BuildArtifact",
@@ -81,7 +81,7 @@ resource "aws_codepipeline" "static_web_pipeline" {
       name             = "Deploy"
       output_artifacts = []
       owner            = "AWS"
-      provider         = "S3"
+      provider         = "CodeDeploy"
       run_order        = 1
       version          = "1"
     }
