@@ -66,24 +66,24 @@ resource "aws_codepipeline" "scribble_pipeline" {
     }
   }
 
-//  stage {
-//    name = "Deploy"
-//
-//    action {
-//      category = "Deploy"
-//      configuration = {
-//        "BucketName" = aws_s3_bucket.static_web_bucket.bucket
-//        "Extract"    = "true"
-//      }
-//      input_artifacts = [
-//        "BuildArtifact",
-//      ]
-//      name             = "Deploy"
-//      output_artifacts = []
-//      owner            = "AWS"
-//      provider         = "S3"
-//      run_order        = 1
-//      version          = "1"
-//    }
-//  }
+  stage {
+    name = "Deploy"
+
+    action {
+      category = "Deploy"
+      configuration = {
+        "ApplicationName"     = aws_codedeploy_app.scribble_deploy.name
+        "DeploymentGroupName" = aws_codedeploy_deployment_group.scribble_codedeploy_deployment_group.deployment_group_name
+      }
+      input_artifacts = [
+        "BuildArtifact",
+      ]
+      name             = "Deploy"
+      output_artifacts = []
+      owner            = "AWS"
+      provider         = "CodeDeploy"
+      run_order        = 1
+      version          = "1"
+    }
+  }
 }

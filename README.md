@@ -1,4 +1,4 @@
 # scribble-hackathon
 eb dataplane hackathon
 
-- Using Terraform
+* using ``default`` security group and VPC

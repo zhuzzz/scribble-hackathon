@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 provider "github" {
-  token   = "${data.aws_ssm_parameter.webhook_secret.value}"
+  token   = data.aws_ssm_parameter.webhook_secret.value
   owner   = var.repository_owner
   version = "~> 4.0.0"
 }
