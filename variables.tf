@@ -23,11 +23,6 @@ variable "repository_name" {
   default     = "Scribbles-source"
 }
 
-variable "static_web_bucket_name" {
-  description = "S3 Bucket to deploy to"
-  default     = "terraform-scribbles-ramnivet1"
-}
-
 variable "artifacts_bucket_name" {
   description = "S3 Bucket for storing artifacts"
   default     = "codepipeline-artifact-bucket-scribble"
