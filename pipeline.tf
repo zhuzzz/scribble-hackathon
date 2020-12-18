@@ -18,9 +18,9 @@ resource "aws_codepipeline" "static_web_pipeline" {
       configuration = {
         "Branch"               = var.repository_branch
         "Owner"                = var.repository_owner
-        "PollForSourceChanges" = "false"
+        "PollForSourceChanges" = "true"
         "Repo"                 = var.repository_name
-        OAuthToken             = var.github_token
+        "OAuthToken"           = "${data.aws_ssm_parameter.webhook_secret.value}"
       }
 
       input_artifacts = []

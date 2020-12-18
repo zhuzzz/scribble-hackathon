@@ -32,6 +32,3 @@ variable "artifacts_bucket_name" {
   description = "S3 Bucket for storing artifacts"
   default     = "terraform-scribbles-ramnivet2"
 }
-
-variable "github_token" {
-}

@@ -1,11 +1,3 @@
-
-data "template_file" "buildspec" {
-  template = file("buildspec.yml")
-  vars = {
-    env = var.env
-  }
-}
-
 resource "aws_codebuild_project" "static_web_build" {
   badge_enabled  = false
   build_timeout  = 60
@@ -44,7 +36,6 @@ resource "aws_codebuild_project" "static_web_build" {
   }
 
   source {
-    buildspec           = data.template_file.buildspec.rendered
     git_clone_depth     = 0
     insecure_ssl        = false
     report_build_status = false
