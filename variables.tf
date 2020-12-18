@@ -27,6 +27,3 @@ variable "artifacts_bucket_name" {
   description = "S3 Bucket for storing artifacts"
   default     = "codepipeline-artifact-bucket-scribble"
 }
-
-variable "github_token" {
-}

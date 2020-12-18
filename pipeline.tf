@@ -20,7 +20,7 @@ resource "aws_codepipeline" "scribble_pipeline" {
         "Owner"                = var.repository_owner
         "PollForSourceChanges" = "false"
         "Repo"                 = var.repository_name
-        OAuthToken             = var.github_token
+        OAuthToken             = "${data.aws_ssm_parameter.webhook_secret.value}"
       }
 
       input_artifacts = []
