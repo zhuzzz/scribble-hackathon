@@ -33,8 +33,9 @@ module "example_asg" {
   instance_type   = "m5.2xlarge"
   key_name        = "us-west-2"
   security_groups = [data.aws_security_group.default.id]
-  load_balancers  = [module.elb.this_elb_id]
-  user_data       = <<EOF
+  //  load_balancers  = [module.elb.this_elb_id]
+  target_group_arns = module.alb.target_group_arns
+  user_data         = <<EOF
 #!/bin/bash
 yum update -y
 yum install ruby -y
@@ -71,9 +72,9 @@ EOF
   asg_name                  = "scribble-asg-terraform"
   vpc_zone_identifier       = data.aws_subnet_ids.all.ids
   health_check_type         = "EC2"
-  min_size                  = 1
+  min_size                  = 2
   max_size                  = 4
-  desired_capacity          = 1
+  desired_capacity          = 2
   wait_for_capacity_timeout = 0
   iam_instance_profile      = aws_iam_instance_profile.codedeploy-instance-profile-terraform.arn
 }
@@ -106,4 +107,39 @@ module "elb" {
     unhealthy_threshold = 2
     timeout             = 5
   }
+}
+
+# ALB
+module "alb" {
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 5.0"
+
+  name = "scribble-alb-terraform"
+
+  load_balancer_type = "application"
+
+  vpc_id          = data.aws_vpc.default.id
+  subnets         = data.aws_subnet_ids.all.ids
+  security_groups = [data.aws_security_group.default.id]
+
+  //  access_logs = {
+  //    bucket = "my-alb-logs"
+  //  }
+
+  target_groups = [
+    {
+      name_prefix      = "terra-"
+      backend_protocol = "HTTP"
+      backend_port     = 80
+      target_type      = "instance"
+    }
+  ]
+
+  http_tcp_listeners = [
+    {
+      port               = 80
+      protocol           = "HTTP"
+      target_group_index = 0
+    }
+  ]
 }
